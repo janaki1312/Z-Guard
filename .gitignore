@@ -1,0 +1,19 @@
+# Python cache and test files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Local backup
+ai_engine_backup/
+
+# Generated datasets
+ai_engine/data/*.csv
+!ai_engine/data/README.md
+
+# Generated model artifacts
+ai_engine/artifacts/*.joblib
+ai_engine/artifacts/model_metadata.json
+
+ai_engine/package-lock.json

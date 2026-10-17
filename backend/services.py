@@ -7,9 +7,19 @@ from uuid import uuid4
 
 AI_ENGINE_DIR = Path(__file__).resolve().parents[1] / "ai_engine"
 
-# Allow imports from the sibling ai_engine directory.
+# Prioritize the AI engine directory so its schemas.py
+# is used by detector.py and baseline.py.
+# Keep the AI engine's imports separate from backend modules.
 if str(AI_ENGINE_DIR) not in sys.path:
     sys.path.insert(0, str(AI_ENGINE_DIR))
+
+# Remove a previously loaded backend schemas module so the
+# AI engine can import its own schemas.py.
+loaded_schemas = sys.modules.get("schemas")
+if loaded_schemas is not None:
+    loaded_file = getattr(loaded_schemas, "__file__", "")
+    if loaded_file and "backend" in str(loaded_file).lower():
+        del sys.modules["schemas"]
 
 from detector import AnomalyDetector  # noqa: E402
 
