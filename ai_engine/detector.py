@@ -59,8 +59,8 @@ class AnomalyDetector:
         baseline = baseline_detect(event)
         rule_signals = baseline["signals"]
 
-        # Combine the ML result and threshold rules.
-        is_anomaly = prediction == -1 or baseline["is_anomaly"]
+        # Use transparent threshold rules as the primary alert decision.
+        is_anomaly = baseline["is_anomaly"]
 
         if is_anomaly and (
             anomaly_score >= HIGH_SCORE_THRESHOLD or len(rule_signals) >= 2
@@ -70,22 +70,43 @@ class AnomalyDetector:
             severity = "MEDIUM"
         else:
             severity = "LOW"
+        if rule_signals:
+            signal_descriptions = {
+                "high_response_latency": (
+                    f"response time is {event['response_time_ms']} ms "
+                    f"(threshold: > {900} ms)"
+                ),
+                "elevated_error_rate": (
+                    f"error rate is {event['error_rate']:.1%} "
+                    f"(threshold: > {0.08:.0%})"
+                ),
+                "high_cpu_utilization": (
+                    f"CPU usage is {event['cpu_usage_pct']}% "
+                    f"(threshold: > {85}%)"
+                ),
+                "low_transaction_volume": (
+                    f"transaction volume is "
+                    f"{event['transactions_per_minute']} per minute "
+                    f"(threshold: < {150})"
+                ),
+            }
 
-        if rule_signals and prediction == -1:
+            details = [
+                signal_descriptions[signal]
+                for signal in rule_signals
+                if signal in signal_descriptions
+            ]
+
             explanation = (
-                "ML model and threshold rules both indicate unusual behavior."
-            )
-        elif rule_signals:
-            explanation = (
-                "Threshold rules detected unusual operational signals."
-            )
-        elif prediction == -1:
-            explanation = (
-                "ML model identified an unusual pattern compared with "
-                "normal training data."
+                "Anomalous operational signals detected: "
+                + "; ".join(details)
+                + "."
             )
         else:
-            explanation = "No anomaly detected by the current checks."
+            explanation = (
+                "No configured operational thresholds were exceeded."
+            )
+
 
         return {
             "is_anomaly": bool(is_anomaly),

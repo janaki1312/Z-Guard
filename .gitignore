@@ -13,7 +13,19 @@ ai_engine/data/*.csv
 !ai_engine/data/README.md
 
 # Generated model artifacts
-ai_engine/artifacts/*.joblib
-ai_engine/artifacts/model_metadata.json
+# Model files required for deployment
+# ai_engine/artifacts/*.joblib
+# ai_engine/artifacts/model_metadata.json
 
 ai_engine/package-lock.json
+
+# Local database and secrets
+backend/*.sqlite3
+backend/*.db
+.env
+.env.*
+!.env.example
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/dist/

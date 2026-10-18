@@ -1,0 +1,16 @@
+{
+  "model_name": "Z-Guard Isolation Forest",
+  "algorithm": "IsolationForest",
+  "random_seed": 42,
+  "training_rows_total": 862,
+  "training_rows_normal": 750,
+  "test_rows": 288,
+  "feature_columns": [
+    "response_time_ms",
+    "error_rate",
+    "cpu_usage_pct",
+    "transactions_per_minute"
+  ],
+  "training_method": "Fit on normal training examples only",
+  "dataset_type": "Synthetic demonstration data"
+}
